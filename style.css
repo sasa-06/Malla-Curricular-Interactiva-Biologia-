@@ -2,75 +2,31 @@ body {
     font-family: sans-serif;
     background-color: #f4f4f4;
     padding: 20px;
+    overflow-x: auto; /* Para permitir el desplazamiento horizontal si la malla es muy ancha */
 }
 
 h1 {
     text-align: center;
     color: #333;
+    margin-bottom: 30px;
 }
 
 #malla-container {
     display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    justify-content: center;
-    margin-top: 30px;
-}
-
-.materia {
-    width: 250px;
-    height: 120px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    transition: transform 0.2s ease;
-    text-align: center;
-}
-
-.materia:hover {
-    transform: translateY(-5px);
-}
-
-.materia h3 {
-    margin: 0;
-    font-size: 1.2em;
-    font-weight: bold;
-}
-
-.materia p {
-    margin: 5px 0 0;
-    font-size: 0.9em;
-    color: #666;
-}
-
-/* Colores pastel para los estados */
-.aprobado {
-    background-color: #b3e6b3; /* Verde pastel */
-    border: 2px solid #85c285; /* Borde verde un poco más oscuro */
-}
-
-.pendiente {
-    background-color: #ffcccc; /* Rosa pastel */
-    border: 2px solid #e6a0a0; /* Borde rosa un poco más oscuro */
-}
-
-.cursando {
-    background-color: #ffff99; /* Amarillo claro */
-    border: 2px solid #e6e68a; /* Borde amarillo un poco más oscuro */
-}
-.semestre {
-    margin-bottom: 40px;
+    gap: 20px; /* Espacio entre semestres */
     padding: 20px;
+    align-items: flex-start; /* Para alinear los contenedores de semestre en la parte superior */
+}
+
+.semestre {
     background-color: #f9f9f9;
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    width: 100%;
-    text-align: center;
+    padding: 20px;
+    min-width: 250px; /* Ancho mínimo para cada semestre */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .semestre h2 {
@@ -78,4 +34,60 @@ h1 {
     color: #555;
     border-bottom: 2px solid #ccc;
     padding-bottom: 10px;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.materia {
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    text-align: center;
+    min-width: 150px;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.materia:hover {
+    transform: translateY(-3px);
+}
+
+.materia h3 {
+    margin-top: 0;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+.materia p {
+    margin-bottom: 0;
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* Colores pastel para los estados (manteniendo los anteriores) */
+.aprobado {
+    background-color: #b3e6b3;
+    border-color: #85c285;
+}
+
+.pendiente {
+    background-color: #ffcccc;
+    border-color: #e6a0a0;
+}
+
+.cursando {
+    background-color: #ffff99;
+    border-color: #e6e68a;
+}
+
+/* Estilos para las flechas de prerrequisitos (necesitarán JavaScript para posicionarse) */
+.prerequisito-arrow {
+    position: absolute;
+    background-color: #333;
+    height: 2px;
+    width: 50px; /* Ajustar según sea necesario */
+    z-index: -1; /* Para que estén detrás de las materias */
 }
