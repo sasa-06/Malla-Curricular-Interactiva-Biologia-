@@ -63,3 +63,19 @@ h1 {
     background-color: #ffff99; /* Amarillo claro */
     border: 2px solid #e6e68a; /* Borde amarillo un poco más oscuro */
 }
+.semestre {
+    margin-bottom: 40px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    width: 100%;
+    text-align: center;
+}
+
+.semestre h2 {
+    margin-top: 0;
+    color: #555;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 10px;
+}
