@@ -1,93 +1,172 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+:root {
+    --color-aprobado: #84dcc6;
+    --color-cursando: #ffeb99;
+    --color-pendiente: #ff6961;
+    --sombra-card: rgba(0, 0, 0, 0.1);
+}
+
 body {
-    font-family: sans-serif;
-    background-color: #f4f4f4;
+    font-family: 'Poppins', sans-serif;
+    background-color: #f0f4f8;
+    color: #333;
     padding: 20px;
-    overflow-x: auto; /* Para permitir el desplazamiento horizontal si la malla es muy ancha */
+    overflow-x: auto;
 }
 
 h1 {
     text-align: center;
-    color: #333;
+    color: #2c3e50;
     margin-bottom: 30px;
 }
 
 #malla-container {
     display: flex;
-    gap: 20px; /* Espacio entre semestres */
+    gap: 25px;
     padding: 20px;
-    align-items: flex-start; /* Para alinear los contenedores de semestre en la parte superior */
+    align-items: flex-start;
 }
 
 .semestre {
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    padding: 20px;
-    min-width: 250px; /* Ancho mínimo para cada semestre */
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px var(--sombra-card);
+    padding: 25px;
+    min-width: 250px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    transition: transform 0.3s ease-in-out;
+}
+
+.semestre:hover {
+    transform: translateY(-5px);
 }
 
 .semestre h2 {
     margin-top: 0;
-    color: #555;
-    border-bottom: 2px solid #ccc;
-    padding-bottom: 10px;
-    text-align: center;
-    margin-bottom: 15px;
+    color: #34495e;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    font-weight: 600;
 }
 
 .materia {
-    background-color: #eee;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px 15px;
-    margin-bottom: 10px;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
     text-align: center;
-    min-width: 150px;
+    min-width: 180px;
     box-sizing: border-box;
     cursor: pointer;
-    transition: transform 0.2s ease;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .materia:hover {
-    transform: translateY(-3px);
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .materia h3 {
-    margin-top: 0;
+    margin: 0;
     font-size: 1em;
-    font-weight: bold;
+    font-weight: 600;
+    line-height: 1.2;
 }
 
 .materia p {
-    margin-bottom: 0;
-    font-size: 0.9em;
-    color: #666;
+    margin: 5px 0 0;
+    font-size: 0.85em;
+    color: #555;
 }
 
-/* Colores pastel para los estados (manteniendo los anteriores) */
+/* Colores de los estados */
 .aprobado {
-    background-color: #b3e6b3;
-    border-color: #85c285;
+    background-color: var(--color-aprobado);
+    border: 1px solid #66b2a4;
 }
 
 .pendiente {
-    background-color: #ffcccc;
-    border-color: #e6a0a0;
+    background-color: var(--color-pendiente);
+    border: 1px solid #cc524a;
 }
 
 .cursando {
-    background-color: #ffff99;
-    border-color: #e6e68a;
+    background-color: var(--color-cursando);
+    border: 1px solid #e6b800;
 }
 
-/* Estilos para las flechas de prerrequisitos (necesitarán JavaScript para posicionarse) */
-.prerequisito-arrow {
-    position: absolute;
-    background-color: #333;
-    height: 2px;
-    width: 50px; /* Ajustar según sea necesario */
-    z-index: -1; /* Para que estén detrás de las materias */
+/* Estilos de la barra de progreso */
+.stats-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.progress-bar-container {
+    width: 80%;
+    max-width: 600px;
+    height: 20px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    margin: 0 auto 10px;
+    overflow: hidden;
+}
+
+#progress-bar {
+    height: 100%;
+    width: 0%;
+    background-color: #4CAF50;
+    transition: width 0.5s ease-in-out;
+    border-radius: 10px;
+}
+
+#progress-text {
+    font-weight: 600;
+    color: #555;
+}
+
+/* Estilos del cuadro de sugerencias */
+#sugerencias-box {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    border: 1px solid #ccc;
+    z-index: 1000;
+}
+
+#sugerencias-box.hidden {
+    display: none;
+}
+
+#sugerencias-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+#sugerencias-list li {
+    background-color: #f8f8f8;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    border-left: 4px solid #3498db;
+}
+
+#close-sugerencias {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+    float: right;
 }
