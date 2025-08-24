@@ -1,0 +1,65 @@
+body {
+    font-family: sans-serif;
+    background-color: #f4f4f4;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+#malla-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.materia {
+    width: 250px;
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    text-align: center;
+}
+
+.materia:hover {
+    transform: translateY(-5px);
+}
+
+.materia h3 {
+    margin: 0;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.materia p {
+    margin: 5px 0 0;
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* Colores pastel para los estados */
+.aprobado {
+    background-color: #b3e6b3; /* Verde pastel */
+    border: 2px solid #85c285; /* Borde verde un poco más oscuro */
+}
+
+.pendiente {
+    background-color: #ffcccc; /* Rosa pastel */
+    border: 2px solid #e6a0a0; /* Borde rosa un poco más oscuro */
+}
+
+.cursando {
+    background-color: #ffff99; /* Amarillo claro */
+    border: 2px solid #e6e68a; /* Borde amarillo un poco más oscuro */
+}
