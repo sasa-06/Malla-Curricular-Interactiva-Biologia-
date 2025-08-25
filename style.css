@@ -58,12 +58,14 @@ main {
 
 #malla-container {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* Mantiene los elementos en una sola línea */
+    overflow-x: auto; /* Permite desplazamiento horizontal si es necesario */
     gap: 20px;
+    padding-bottom: 20px;
 }
 
 .semester {
-    flex: 1 1 calc(33.333% - 20px);
+    flex: 0 0 250px; /* Ancho fijo para cada semestre */
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
@@ -90,14 +92,10 @@ main {
     transform: translateY(-3px);
 }
 
-.course h3 {
+.course h3, .course p {
     margin: 0 0 5px;
     font-size: 1.1em;
-}
-
-.course p {
-    margin: 0;
-    font-size: 0.9em;
+    color: #000; /* Color de texto por defecto */
 }
 
 .course-status {
@@ -111,13 +109,25 @@ main {
     background-color: var(--color-cursando);
 }
 
+.cursando h3, .cursando p {
+    color: white; /* Texto blanco para mejor lectura */
+}
+
 .aprobada {
     background-color: var(--color-aprobada);
-    cursor: default;
+    cursor: pointer; /* Lo hacemos clickeable de nuevo */
+}
+
+.aprobada h3, .aprobada p {
+    color: black; 
 }
 
 .no-vista {
     background-color: var(--color-no-vista);
+}
+
+.no-vista h3, .no-vista p {
+    color: black; 
 }
 
 .no-disponible {
@@ -125,14 +135,6 @@ main {
     cursor: not-allowed;
 }
 
-.course.no-disponible h3, .course.no-disponible p {
+.no-disponible h3, .no-disponible p {
     color: #999;
-}
-
-.course-note-input {
-    width: 80px;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-top: 10px;
 }
