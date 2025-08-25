@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const semesterAverageEl = document.getElementById('semester-average');
     const careerAverageEl = document.getElementById('career-average');
     
-    // Malla Curricular con datos
     const courses = [
         { name: 'Algebra y trigonometría', credits: 3, semester: 1, prereq: [] },
         { name: 'Fundamentos de Química Analítica', credits: 3, semester: 1, prereq: [] },
@@ -94,12 +93,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 courseEl.className = 'course';
                 
                 const isApproved = approvedCourses.includes(course.name);
-                const isAvailable = course.prereq.every(prereq => approvedCourses.includes(prereq));
-
+                const prereqMet = course.prereq.every(prereq => approvedCourses.includes(prereq));
+                
                 if (isApproved) {
                     courseEl.classList.add('aprobada');
-                } else if (isAvailable) {
-                    courseEl.classList.add('no-vista');
+                } else if (prereqMet) {
+                    courseEl.classList.add('cursando');
                 } else {
                     courseEl.classList.add('no-disponible');
                 }
@@ -112,16 +111,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="course-status"></div>
                 `;
 
-                // Aquí manejamos el evento de clic
                 courseEl.addEventListener('click', (e) => {
-                    // Evita que el clic en el input de la nota active el evento del div
                     if (e.target.tagName.toLowerCase() === 'input') {
                         return;
                     }
                     toggleCourseStatus(course.name);
                 });
                 
-                // Si la materia está aprobada, muestra el input para la nota
                 if (isApproved) {
                     const noteInput = document.createElement('input');
                     noteInput.type = 'number';
@@ -156,7 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleCourseStatus = (courseName) => {
         const isApproved = approvedCourses.includes(courseName);
 
-        // Desaprobar la materia si ya está aprobada
         if (isApproved) {
             const hasDependents = courses.some(c => c.prereq.includes(courseName) && approvedCourses.includes(c.name));
             if (hasDependents) {
@@ -169,7 +164,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             delete courseNotes[courseName];
         } else {
-            // Aprobar la materia si está disponible
             const course = courses.find(c => c.name === courseName);
             if (course.prereq.every(prereq => approvedCourses.includes(prereq))) {
                 approvedCourses.push(courseName);
