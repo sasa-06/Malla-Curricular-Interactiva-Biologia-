@@ -1,6 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
     const mallaContainer = document.getElementById('malla-container');
-    
+    const progressBar = document.getElementById('progress-bar');
+    const progressPercentage = document.getElementById('progress-percentage');
+    const semesterAverageEl = document.getElementById('semester-average');
+    const careerAverageEl = document.getElementById('career-average');
+    const courseNotes = {}; // Variable para las notas
+
     const courses = [
         { name: 'Algebra y trigonometría', credits: 3, semester: 1, prereq: [] },
         { name: 'Fundamentos de Química Analítica', credits: 3, semester: 1, prereq: [] },
@@ -22,10 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         { name: 'Calculo Integral', credits: 3, semester: 4, prereq: ['Calculo Diferencial'] },
         { name: 'Probabilidad y Estadística', credits: 3, semester: 4, prereq: ['Calculo Diferencial'] },
-        { name: 'Genética', credits: 4, semester: 4, prereq: ['Biología Celular y Molecular 2'] },
+        { name: 'Genética', credits: 4, semester: 4, prere: ['Biología Celular y Molecular 2'] },
         { name: 'Biología Animal 2', credits: 4, semester: 4, prereq: ['Biología Animal 1'] },
         { name: 'Ingles 3', credits: 2, semester: 4, prereq: ['Ingles 2'] },
-
+        
         { name: 'Biofísica', credits: 3, semester: 5, prereq: ['Calculo Integral'] },
         { name: 'Bioestadística', credits: 3, semester: 5, prereq: ['Probabilidad y Estadística'] },
         { name: 'Evolución Biológica', credits: 3, semester: 5, prereq: ['Genética'] },
@@ -63,8 +68,53 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: 'Catedra Ambiental UdeA', credits: 2, semester: 10, prereq: ['Catedra de Formación Ciudadana y Constitucional'] }
     ];
 
+    const totalCredits = courses.reduce((sum, course) => sum + course.credits, 0);
+
     let approvedCourses = [];
 
+    const updateProgress = () => {
+        const approvedCredits = courses.filter(c => approvedCourses.includes(c.name)).reduce((sum, c) => sum + c.credits, 0);
+        const percentage = (approvedCredits / totalCredits) * 100;
+        progressBar.style.width = `${percentage}%`;
+        progressPercentage.textContent = `${percentage.toFixed(2)}%`;
+    };
+
+    const updateAverages = () => {
+        let semesterNotes = {};
+        courses.forEach(course => {
+            if (approvedCourses.includes(course.name) && courseNotes[course.name]) {
+                if (!semesterNotes[course.semester]) {
+                    semesterNotes[course.semester] = { sum: 0, credits: 0 };
+                }
+                semesterNotes[course.semester].sum += courseNotes[course.name] * course.credits;
+                semesterNotes[course.semester].credits += course.credits;
+            }
+        });
+
+        const currentSemester = Math.max(...courses.filter(c => approvedCourses.includes(c.name)).map(c => c.semester), 0);
+        
+        if (semesterNotes[currentSemester]) {
+            const avg = semesterNotes[currentSemester].sum / semesterNotes[currentSemester].credits;
+            semesterAverageEl.textContent = avg.toFixed(2);
+        } else {
+            semesterAverageEl.textContent = 'N/A';
+        }
+
+        let careerTotalSum = 0;
+        let careerTotalCredits = 0;
+        for (const sem in semesterNotes) {
+            careerTotalSum += semesterNotes[sem].sum;
+            careerTotalCredits += semesterNotes[sem].credits;
+        }
+
+        if (careerTotalCredits > 0) {
+            const careerAvg = careerTotalSum / careerTotalCredits;
+            careerAverageEl.textContent = careerAvg.toFixed(2);
+        } else {
+            careerAverageEl.textContent = 'N/A';
+        }
+    };
+    
     const renderMalla = () => {
         mallaContainer.innerHTML = '';
         const semesters = {};
@@ -86,7 +136,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 courseEl.className = 'course';
                 
                 const isApproved = approvedCourses.includes(course.name);
-                const isAvailable = course.prereq.every(prereq => approvedCourses.includes(prereq));
+                const prereqMet = course.prereq.every(prereq => approvedCourses.includes(prereq));
+                
+                const isAvailable = prereqMet;
 
                 if (isApproved) {
                     courseEl.classList.add('aprobada');
@@ -102,17 +154,54 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="course-status"></div>
                 `;
 
-                if (isAvailable && !isApproved) {
+                if (isAvailable) {
                     courseEl.addEventListener('click', () => {
-                        approvedCourses.push(course.name);
-                        renderMalla();
+                        toggleCourseStatus(course.name);
                     });
                 }
                 
+                if (isApproved) {
+                    const noteInput = document.createElement('input');
+                    noteInput.type = 'number';
+                    noteInput.step = '0.1';
+                    noteInput.min = '1.0';
+                    noteInput.max = '5.0';
+                    noteInput.placeholder = 'Nota';
+                    noteInput.className = 'course-note-input';
+                    noteInput.value = courseNotes[course.name] || '';
+                    
+                    noteInput.addEventListener('change', (e) => {
+                        const note = parseFloat(e.target.value);
+                        if (!isNaN(note) && note >= 1.0 && note <= 5.0) {
+                            courseNotes[course.name] = note;
+                        } else {
+                            delete courseNotes[course.name];
+                        }
+                        updateAverages();
+                    });
+                    courseEl.appendChild(noteInput);
+                }
+
                 semesterEl.appendChild(courseEl);
             });
             mallaContainer.appendChild(semesterEl);
         }
+        updateProgress();
+        updateAverages();
+    };
+
+    const toggleCourseStatus = (courseName) => {
+        const isApproved = approvedCourses.includes(courseName);
+
+        if (isApproved) {
+            const index = approvedCourses.indexOf(courseName);
+            if (index > -1) {
+                approvedCourses.splice(index, 1);
+            }
+        } else {
+            approvedCourses.push(courseName);
+        }
+        renderMalla();
     };
 
     renderMalla();
