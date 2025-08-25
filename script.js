@@ -4,8 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressPercentage = document.getElementById('progress-percentage');
     const semesterAverageEl = document.getElementById('semester-average');
     const careerAverageEl = document.getElementById('career-average');
-    const courseNotes = {}; // Variable para las notas
-
+    
+    // Malla Curricular con datos
     const courses = [
         { name: 'Algebra y trigonometría', credits: 3, semester: 1, prereq: [] },
         { name: 'Fundamentos de Química Analítica', credits: 3, semester: 1, prereq: [] },
@@ -27,10 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         { name: 'Calculo Integral', credits: 3, semester: 4, prereq: ['Calculo Diferencial'] },
         { name: 'Probabilidad y Estadística', credits: 3, semester: 4, prereq: ['Calculo Diferencial'] },
-        { name: 'Genética', credits: 4, semester: 4, prere: ['Biología Celular y Molecular 2'] },
+        { name: 'Genética', credits: 4, semester: 4, prereq: ['Biología Celular y Molecular 2'] },
         { name: 'Biología Animal 2', credits: 4, semester: 4, prereq: ['Biología Animal 1'] },
         { name: 'Ingles 3', credits: 2, semester: 4, prereq: ['Ingles 2'] },
-        
+
         { name: 'Biofísica', credits: 3, semester: 5, prereq: ['Calculo Integral'] },
         { name: 'Bioestadística', credits: 3, semester: 5, prereq: ['Probabilidad y Estadística'] },
         { name: 'Evolución Biológica', credits: 3, semester: 5, prereq: ['Genética'] },
@@ -70,7 +70,116 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const totalCredits = courses.reduce((sum, course) => sum + course.credits, 0);
 
-    let approvedCourses = [];
+    let approvedCourses = JSON.parse(localStorage.getItem('approvedCourses')) || [];
+    let courseNotes = JSON.parse(localStorage.getItem('courseNotes')) || {};
+
+    const renderMalla = () => {
+        mallaContainer.innerHTML = '';
+        const semesters = {};
+
+        courses.forEach(course => {
+            if (!semesters[course.semester]) {
+                semesters[course.semester] = [];
+            }
+            semesters[course.semester].push(course);
+        });
+
+        for (const semesterNum in semesters) {
+            const semesterEl = document.createElement('div');
+            semesterEl.className = 'semester';
+            semesterEl.innerHTML = `<h2>Semestre ${semesterNum}</h2>`;
+
+            semesters[semesterNum].forEach(course => {
+                const courseEl = document.createElement('div');
+                courseEl.className = 'course';
+                
+                const isApproved = approvedCourses.includes(course.name);
+                const isAvailable = course.prereq.every(prereq => approvedCourses.includes(prereq));
+
+                if (isApproved) {
+                    courseEl.classList.add('aprobada');
+                } else if (isAvailable) {
+                    courseEl.classList.add('no-vista');
+                } else {
+                    courseEl.classList.add('no-disponible');
+                }
+                
+                courseEl.dataset.courseName = course.name;
+
+                courseEl.innerHTML = `
+                    <h3>${course.name}</h3>
+                    <p>Créditos: ${course.credits}</p>
+                    <div class="course-status"></div>
+                `;
+
+                // Aquí manejamos el evento de clic
+                courseEl.addEventListener('click', (e) => {
+                    // Evita que el clic en el input de la nota active el evento del div
+                    if (e.target.tagName.toLowerCase() === 'input') {
+                        return;
+                    }
+                    toggleCourseStatus(course.name);
+                });
+                
+                // Si la materia está aprobada, muestra el input para la nota
+                if (isApproved) {
+                    const noteInput = document.createElement('input');
+                    noteInput.type = 'number';
+                    noteInput.step = '0.1';
+                    noteInput.min = '1.0';
+                    noteInput.max = '5.0';
+                    noteInput.placeholder = 'Nota';
+                    noteInput.className = 'course-note-input';
+                    noteInput.value = courseNotes[course.name] || '';
+                    
+                    noteInput.addEventListener('change', (e) => {
+                        const note = parseFloat(e.target.value);
+                        if (!isNaN(note) && note >= 1.0 && note <= 5.0) {
+                            courseNotes[course.name] = note;
+                        } else {
+                            delete courseNotes[course.name];
+                        }
+                        localStorage.setItem('courseNotes', JSON.stringify(courseNotes));
+                        updateAverages();
+                    });
+                    courseEl.appendChild(noteInput);
+                }
+
+                semesterEl.appendChild(courseEl);
+            });
+            mallaContainer.appendChild(semesterEl);
+        }
+        updateProgress();
+        updateAverages();
+    };
+
+    const toggleCourseStatus = (courseName) => {
+        const isApproved = approvedCourses.includes(courseName);
+
+        // Desaprobar la materia si ya está aprobada
+        if (isApproved) {
+            const hasDependents = courses.some(c => c.prereq.includes(courseName) && approvedCourses.includes(c.name));
+            if (hasDependents) {
+                alert('No puedes desaprobar esta materia porque es prerrequisito de una materia que ya has aprobado.');
+                return;
+            }
+            const index = approvedCourses.indexOf(courseName);
+            if (index > -1) {
+                approvedCourses.splice(index, 1);
+            }
+            delete courseNotes[courseName];
+        } else {
+            // Aprobar la materia si está disponible
+            const course = courses.find(c => c.name === courseName);
+            if (course.prereq.every(prereq => approvedCourses.includes(prereq))) {
+                approvedCourses.push(courseName);
+            }
+        }
+        
+        localStorage.setItem('approvedCourses', JSON.stringify(approvedCourses));
+        localStorage.setItem('courseNotes', JSON.stringify(courseNotes));
+        renderMalla();
+    };
 
     const updateProgress = () => {
         const approvedCredits = courses.filter(c => approvedCourses.includes(c.name)).reduce((sum, c) => sum + c.credits, 0);
@@ -113,95 +222,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             careerAverageEl.textContent = 'N/A';
         }
-    };
-    
-    const renderMalla = () => {
-        mallaContainer.innerHTML = '';
-        const semesters = {};
-
-        courses.forEach(course => {
-            if (!semesters[course.semester]) {
-                semesters[course.semester] = [];
-            }
-            semesters[course.semester].push(course);
-        });
-
-        for (const semesterNum in semesters) {
-            const semesterEl = document.createElement('div');
-            semesterEl.className = 'semester';
-            semesterEl.innerHTML = `<h2>Semestre ${semesterNum}</h2>`;
-
-            semesters[semesterNum].forEach(course => {
-                const courseEl = document.createElement('div');
-                courseEl.className = 'course';
-                
-                const isApproved = approvedCourses.includes(course.name);
-                const prereqMet = course.prereq.every(prereq => approvedCourses.includes(prereq));
-                
-                const isAvailable = prereqMet;
-
-                if (isApproved) {
-                    courseEl.classList.add('aprobada');
-                } else if (isAvailable) {
-                    courseEl.classList.add('no-vista');
-                } else {
-                    courseEl.classList.add('no-disponible');
-                }
-                
-                courseEl.innerHTML = `
-                    <h3>${course.name}</h3>
-                    <p>Créditos: ${course.credits}</p>
-                    <div class="course-status"></div>
-                `;
-
-                if (isAvailable) {
-                    courseEl.addEventListener('click', () => {
-                        toggleCourseStatus(course.name);
-                    });
-                }
-                
-                if (isApproved) {
-                    const noteInput = document.createElement('input');
-                    noteInput.type = 'number';
-                    noteInput.step = '0.1';
-                    noteInput.min = '1.0';
-                    noteInput.max = '5.0';
-                    noteInput.placeholder = 'Nota';
-                    noteInput.className = 'course-note-input';
-                    noteInput.value = courseNotes[course.name] || '';
-                    
-                    noteInput.addEventListener('change', (e) => {
-                        const note = parseFloat(e.target.value);
-                        if (!isNaN(note) && note >= 1.0 && note <= 5.0) {
-                            courseNotes[course.name] = note;
-                        } else {
-                            delete courseNotes[course.name];
-                        }
-                        updateAverages();
-                    });
-                    courseEl.appendChild(noteInput);
-                }
-
-                semesterEl.appendChild(courseEl);
-            });
-            mallaContainer.appendChild(semesterEl);
-        }
-        updateProgress();
-        updateAverages();
-    };
-
-    const toggleCourseStatus = (courseName) => {
-        const isApproved = approvedCourses.includes(courseName);
-
-        if (isApproved) {
-            const index = approvedCourses.indexOf(courseName);
-            if (index > -1) {
-                approvedCourses.splice(index, 1);
-            }
-        } else {
-            approvedCourses.push(courseName);
-        }
-        renderMalla();
     };
 
     renderMalla();
