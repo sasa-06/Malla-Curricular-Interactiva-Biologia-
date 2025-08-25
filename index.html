@@ -1,51 +1,36 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Malla Curricular de Biología</title>
-  <link rel="stylesheet" href="styles.css"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malla Curricular de Biología</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar">
-    <h1>Malla Curricular Interactiva — Biología</h1>
-    <div class="legend">
-      <span class="dot planned"></span> No vista
-      <span class="dot inprogress"></span> Cursando
-      <span class="dot passed"></span> Aprobada
-      <span class="dot locked"></span> Bloqueada
-    </div>
-  </header>
-
-  <main class="container">
-    <section class="panel">
-      <h2>Progreso de la carrera</h2>
-      <div class="progress-wrap">
-        <div id="progress-bar" class="progress-bar"><span id="progress-text">0%</span></div>
-      </div>
-      <div class="stats">
-        <div><strong>Créditos aprobados:</strong> <span id="approved-credits">0</span>/<span id="total-credits">0</span></div>
-        <div><strong>Promedio general (ponderado):</strong> <span id="overall-gpa">—</span></div>
-      </div>
-      <div class="actions">
-        <button id="save">Guardar</button>
-        <button id="reset">Reiniciar</button>
-      </div>
-    </section>
-
-    <section id="grid" class="grid"></section>
-
-    <section class="panel">
-      <h2>Promedios por semestre</h2>
-      <div id="semester-averages" class="sem-averages"></div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <p>Haz clic en cada materia para cambiar su estado: <em>No vista → Cursando → Aprobada → No vista</em>.  
-    Introduce la nota (0.0 a 5.0) para calcular promedios. Los prerrequisitos se desbloquean automáticamente.</p>
-  </footer>
-
-  <script src="script.js"></script>
+    <header>
+        <h1>Malla Curricular - Biología</h1>
+    </header>
+    <main>
+        <div class="stats-container">
+            <div class="stat-box">
+                <h2>Progreso de la Carrera</h2>
+                <div class="progress-bar-container">
+                    <div id="progress-bar" class="progress-bar"></div>
+                </div>
+                <p id="progress-percentage">0%</p>
+            </div>
+            <div class="stat-box">
+                <h2>Promedio de Semestre</h2>
+                <p id="semester-average">N/A</p>
+            </div>
+            <div class="stat-box">
+                <h2>Promedio de Carrera</h2>
+                <p id="career-average">N/A</p>
+            </div>
+        </div>
+        <div id="malla-container">
+            </div>
+    </main>
+    <script src="script.js"></script>
 </body>
 </html>
