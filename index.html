@@ -2,29 +2,22 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Malla Curricular Interactiva</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Malla Curricular Interactiva</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:700,400|Quicksand:400,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Malla Curricular - Mi Carrera</h1>
-    
-    <div class="stats-container">
-        <div class="progress-bar-container">
-            <div id="progress-bar"></div>
+    <div class="curriculum-container">
+        <header>
+            <h1>Malla Curricular Interactiva</h1>
+            <p>¡Visualiza y gestiona tu avance académico con estilo!</p>
+        </header>
+        <div id="curriculum-content">
+            <!-- Aquí se renderizarán los semestres y materias -->
         </div>
-        <p id="progress-text">Progreso: 0%</p>
     </div>
-    
-    <div id="malla-container">
-        </div>
-
-    <div id="sugerencias-box" class="hidden">
-        <h3>Materias Sugeridas para el Próximo Semestre</h3>
-        <ul id="sugerencias-list"></ul>
-        <button id="close-sugerencias">Cerrar</button>
-    </div>
-
     <script src="script.js"></script>
 </body>
 </html>
